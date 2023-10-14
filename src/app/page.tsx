@@ -5,11 +5,10 @@ import { useEffect, useRef, useState } from 'react'
 export default function Home() {
     const [symbol, setSymbol] = useState('NASDAQ:TSLA')
     const containerRef = useRef<HTMLDivElement>(null)
-    const scriptRef = useRef<HTMLDivElement>(null)
 
     useEffect(
         () => {
-            console.log('setup')
+            const node = containerRef.current
             const script = document.createElement("script")
             script.src = "https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js"
             script.type = "text/javascript"
@@ -27,15 +26,9 @@ export default function Home() {
                         "largeChartUrl": ""
                     }
                 `
-            const node = containerRef.current
-            scriptRef.current = script
             node?.appendChild(script)
             return () => {
-                console.log('cleanup')
-                const scriptToRemove = scriptRef.current
-                if (scriptToRemove && scriptToRemove.parentNode) {
-                    scriptToRemove.parentNode.removeChild(scriptToRemove)
-                }
+                node?.replaceChildren()
             }
         },
         [symbol]
